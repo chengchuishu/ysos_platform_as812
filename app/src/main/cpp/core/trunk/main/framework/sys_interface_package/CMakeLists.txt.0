@@ -1,0 +1,48 @@
+##最低版本号要求##
+cmake_minimum_required (VERSION 2.8)
+
+##project info##
+SET(PROJECT_NAME sys_interface_package)
+PROJECT(${PROJECT_NAME})
+
+#set compile flags
+#set(CMAKE_C_FLAGS "-m64")
+#set(CMAKE_CXX_FLAGS "-std-c++11 -m64")
+##Enable C++11##
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
+##LIB_DIR##
+set(LIB_DIR "/usr/local/lib")
+
+##INSTALL_OUT_DIR##
+set(CMAKE_INSTALL_PREFIX /usr/local/ysos)
+#SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
+#SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
+
+##add inlude include_directories and link_libraries ##
+include_directories(. /usr/local/include ./protect/include ./public/include)
+link_directories(${LIB_DIR})
+
+##查找当前目录下的所有源文件##
+##并将名称保存到DIR_SRCS变量##
+aux_source_directory(./src SRC_LIST)
+
+##指定生成目标##
+# 生成动态库目标
+add_library(${PROJECT_NAME} SHARED ${SRC_LIST})
+# 生成静态库目标
+add_library(${PROJECT_NAME}_static STATIC ${SRC_LIST})
+ 
+# 指定静态库的输出名称
+#set_target_properties(lib_name_static PROPERTIES OUTPUT_NAME "libname")
+# 使动态库和静态库同时存在
+set_target_properties(${PROJECT_NAME} PROPERTIES CLEAN_DIRECT_OUTPUT 1)
+set_target_properties(${PROJECT_NAME}_static PROPERTIES CLEAN_DIRECT_OUTPUT 1)
+ 
+##指定动态库版本##
+# VERSION 动态库版本
+# SOVERSION API版本
+#set_target_properties(libname PROPERTIES VERSION 1.0 SOVERSION 1)
+ 
+##将动态库与动态库同时安装到lib目录中##
+install (TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_static DESTINATION bin)
